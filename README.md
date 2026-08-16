@@ -1,16 +1,16 @@
 # WordPress Docker Environment
 
-A simple and reusable Docker environment for running **WordPress + MariaDB + phpMyAdmin** locally.
+A simple and reusable Docker environment for running **WordPress + MariaDB + phpMyAdmin** using Docker Compose.
 
-This project is designed to make it easy to create a fresh WordPress installation using Docker without installing PHP, MariaDB/MySQL, or phpMyAdmin directly on the host machine.
+This project can be used as a starting point for creating a fresh WordPress website locally or on a server.
 
 ## 🚀 Stack
 
 This project uses:
 
-* [WordPress](https://hub.docker.com/_/wordpress)
-* [MariaDB](https://hub.docker.com/_/mariadb)
-* [phpMyAdmin](https://hub.docker.com/_/phpmyadmin)
+* WordPress
+* MariaDB
+* phpMyAdmin
 * Docker
 * Docker Compose
 
@@ -28,16 +28,28 @@ docker-wp/
 
 #### `.env`
 
-Contains the environment variables used by Docker Compose, including:
+Contains the environment variables used by Docker Compose.
 
-* Database name
-* Database username
-* Database passwords
-* Container names
-* WordPress port
-* phpMyAdmin port
+Current configuration:
 
-> Do not commit real production passwords or sensitive credentials to GitHub.
+```env
+# Database Configuration
+DB_ROOT_PASSWORD=password
+DB_NAME=wordpress
+DB_USER=root
+DB_PASSWORD=password
+
+# Container Names
+DB_CONTAINER_NAME=wordpress_db
+WP_CONTAINER_NAME=wordpress_site
+PMA_CONTAINER_NAME=wordpress_phpmyadmin
+
+# WordPress Configuration
+WP_PORT=8080
+
+# phpMyAdmin Configuration
+PMA_PORT=8081
+```
 
 #### `docker-compose.yml`
 
@@ -51,7 +63,7 @@ It also creates the Docker network and persistent volumes.
 
 #### `uploads.ini`
 
-Custom PHP configuration for WordPress, mainly used for increasing upload and PHP limits.
+Contains custom PHP configuration for WordPress, such as upload size, memory limit, and execution time.
 
 Example:
 
@@ -67,16 +79,18 @@ max_input_time = 300
 
 # ⚙️ Requirements
 
-Before starting, make sure you have:
+Make sure the following are installed:
 
 * Docker
 * Docker Compose
 
-Check your installation:
+Check Docker:
 
 ```bash
 docker --version
 ```
+
+Check Docker Compose:
 
 ```bash
 docker compose version
@@ -86,9 +100,9 @@ docker compose version
 
 # 🛠️ Installation
 
-## 1. Clone the repository
+## 1. Clone the Repository
 
-Clone the project from GitHub:
+Clone this repository:
 
 ```bash
 git clone YOUR_REPOSITORY_URL
@@ -104,21 +118,19 @@ cd docker-wp
 
 ## 2. Configure `.env`
 
-Create or edit the `.env` file.
-
-Example:
+The default `.env` configuration is:
 
 ```env
 # Database Configuration
 DB_ROOT_PASSWORD=password
-DB_NAME=woo_db
-DB_USER=woo_user
-DB_PASSWORD=root
+DB_NAME=wordpress
+DB_USER=root
+DB_PASSWORD=password
 
 # Container Names
-DB_CONTAINER_NAME=woo_db
-WP_CONTAINER_NAME=woo_site
-PMA_CONTAINER_NAME=woo_phpmyadmin
+DB_CONTAINER_NAME=wordpress_db
+WP_CONTAINER_NAME=wordpress_site
+PMA_CONTAINER_NAME=wordpress_phpmyadmin
 
 # WordPress Configuration
 WP_PORT=8080
@@ -127,41 +139,41 @@ WP_PORT=8080
 PMA_PORT=8081
 ```
 
-### Database variables
+### Database Configuration
 
-| Variable           | Description                      |
-| ------------------ | -------------------------------- |
-| `DB_ROOT_PASSWORD` | MariaDB root password            |
-| `DB_NAME`          | WordPress database name          |
-| `DB_USER`          | WordPress database user          |
-| `DB_PASSWORD`      | WordPress database user password |
+| Variable           | Value       | Description                 |
+| ------------------ | ----------- | --------------------------- |
+| `DB_ROOT_PASSWORD` | `password`  | MariaDB root password       |
+| `DB_NAME`          | `wordpress` | WordPress database name     |
+| `DB_USER`          | `root`      | WordPress database username |
+| `DB_PASSWORD`      | `password`  | WordPress database password |
 
-### Container variables
+### Container Names
 
-| Variable             | Description               |
-| -------------------- | ------------------------- |
-| `DB_CONTAINER_NAME`  | MariaDB container name    |
-| `WP_CONTAINER_NAME`  | WordPress container name  |
-| `PMA_CONTAINER_NAME` | phpMyAdmin container name |
+| Variable             | Value                  |
+| -------------------- | ---------------------- |
+| `DB_CONTAINER_NAME`  | `wordpress_db`         |
+| `WP_CONTAINER_NAME`  | `wordpress_site`       |
+| `PMA_CONTAINER_NAME` | `wordpress_phpmyadmin` |
 
 ### Ports
 
-| Variable   | Description          |
-| ---------- | -------------------- |
-| `WP_PORT`  | WordPress HTTP port  |
-| `PMA_PORT` | phpMyAdmin HTTP port |
+| Variable   |   Port |
+| ---------- | -----: |
+| `WP_PORT`  | `8080` |
+| `PMA_PORT` | `8081` |
 
 ---
 
-# ▶️ Start the Environment
+# ▶️ Start WordPress
 
-Run:
+From the project directory, run:
 
 ```bash
 docker compose up -d
 ```
 
-Check running containers:
+Check the containers:
 
 ```bash
 docker compose ps
@@ -170,16 +182,22 @@ docker compose ps
 You should see:
 
 ```text
-woo_db
-woo_site
-woo_phpmyadmin
+wordpress_db
+wordpress_site
+wordpress_phpmyadmin
+```
+
+All containers should have a status similar to:
+
+```text
+Up
 ```
 
 ---
 
 # 🌐 Access WordPress
 
-Open:
+Open your browser and visit:
 
 ```text
 http://localhost:8080
@@ -187,7 +205,7 @@ http://localhost:8080
 
 You should see the WordPress installation screen.
 
-Complete the WordPress installation normally.
+Complete the WordPress setup normally.
 
 ---
 
@@ -199,33 +217,32 @@ Open:
 http://localhost:8081
 ```
 
-For the database server, use:
+The database server is:
 
 ```text
 db
 ```
 
-You can log in using the database credentials defined in `.env`.
-
-For example:
-
-```text
-Username: woo_user
-Password: root
-```
-
-Or use the MariaDB root account:
+Using the default `.env` configuration, you can log in with:
 
 ```text
 Username: root
 Password: password
 ```
 
+The WordPress database will be:
+
+```text
+wordpress
+```
+
 ---
 
-# 🔌 Database Connection
+# 🔌 WordPress Database Connection
 
-WordPress connects to MariaDB using the Docker service name:
+WordPress connects to MariaDB through the Docker network.
+
+The database host should be:
 
 ```yaml
 WORDPRESS_DB_HOST: db:3306
@@ -237,31 +254,29 @@ Do **not** use:
 localhost
 ```
 
-The reason is that WordPress and MariaDB run inside separate Docker containers.
+The Docker architecture is:
 
-Docker provides an internal network where the service:
+```text
+WordPress Container
+        │
+        │ db:3306
+        ▼
+MariaDB Container
+```
+
+The service name:
 
 ```text
 db
 ```
 
-resolves to the MariaDB container.
-
-The connection looks like:
-
-```text
-WordPress
-    │
-    │ db:3306
-    ▼
-MariaDB
-```
+is automatically resolved by Docker's internal network.
 
 ---
 
 # 💾 Persistent Data
 
-The Docker Compose configuration uses persistent volumes for WordPress and MariaDB.
+The Docker Compose configuration uses persistent volumes.
 
 Example:
 
@@ -271,21 +286,21 @@ volumes:
   - wp_data:/var/www/html
 ```
 
-This means that restarting or recreating containers does not automatically remove the WordPress files or database.
+This means WordPress files and the MariaDB database persist even if the containers are stopped or recreated.
 
 ---
 
-# 🛑 Stop the Environment
+# 🛑 Stop WordPress
 
-To stop the containers:
+To stop the environment:
 
 ```bash
 docker compose down
 ```
 
-The containers will be removed, but persistent volumes remain.
+This removes the containers but keeps the persistent volumes.
 
-Start them again with:
+Start the environment again:
 
 ```bash
 docker compose up -d
@@ -293,9 +308,63 @@ docker compose up -d
 
 ---
 
-# ⚠️ Reset the Environment
+# 🔄 Restart WordPress
 
-For a completely fresh installation:
+```bash
+docker compose restart
+```
+
+---
+
+# 🔍 Useful Commands
+
+### Check containers
+
+```bash
+docker compose ps
+```
+
+### View all running containers
+
+```bash
+docker ps
+```
+
+### WordPress logs
+
+```bash
+docker logs wordpress_site
+```
+
+### MariaDB logs
+
+```bash
+docker logs wordpress_db
+```
+
+### phpMyAdmin logs
+
+```bash
+docker logs wordpress_phpmyadmin
+```
+
+### Follow WordPress logs
+
+```bash
+docker logs -f wordpress_site
+```
+
+### Follow MariaDB logs
+
+```bash
+docker logs -f wordpress_db
+```
+
+---
+
+# 🧹 Reset the WordPress Installation
+
+If this is a test installation and you want to completely start over:
 
 ```bash
 docker compose down -v
@@ -307,133 +376,45 @@ Then:
 docker compose up -d
 ```
 
-> **Warning:** `docker compose down -v` removes the Docker volumes, including the WordPress database and WordPress files stored in those volumes.
+This will create a completely new MariaDB database and WordPress installation.
 
-Use this only when you want to completely reset the environment.
+> ⚠️ **Warning:** `docker compose down -v` deletes the Docker volumes. This means the WordPress database and stored WordPress files will be deleted.
 
----
-
-# 🔍 Useful Commands
-
-### View containers
-
-```bash
-docker compose ps
-```
-
-### View all containers
-
-```bash
-docker ps
-```
-
-### View WordPress logs
-
-```bash
-docker logs woo_site
-```
-
-### View MariaDB logs
-
-```bash
-docker logs woo_db
-```
-
-### View phpMyAdmin logs
-
-```bash
-docker logs woo_phpmyadmin
-```
-
-### Follow WordPress logs
-
-```bash
-docker logs -f woo_site
-```
-
-### Restart the environment
-
-```bash
-docker compose restart
-```
-
----
-
-# 🧹 Remove Containers
-
-```bash
-docker compose down
-```
-
-This removes the containers but keeps the persistent volumes.
+Do not use this command on a production website unless you have a backup.
 
 ---
 
 # 🔐 Security
 
-This project is primarily intended for **local development and testing**.
+The default configuration uses simple development passwords:
 
-Do not use the example passwords in a production environment.
-
-For production:
-
-* Use strong passwords.
-* Do not commit `.env` files containing real credentials.
-* Use HTTPS.
-* Restrict phpMyAdmin access.
-* Use a firewall.
-* Keep Docker images updated.
-* Use regular backups.
-* Do not expose MariaDB directly to the public internet.
-
----
-
-# 🚫 Git Ignore
-
-If this repository is public, consider adding `.env` to `.gitignore`:
-
-```gitignore
-.env
+```text
+password
 ```
 
-Then create an example environment file:
+This configuration is intended for **local development and testing**.
+
+For production environments:
+
+* Use strong passwords.
+* Do not expose MariaDB directly to the internet.
+* Restrict phpMyAdmin access.
+* Use HTTPS.
+* Keep Docker images updated.
+* Create regular backups.
+* Use separate database users for WordPress.
+* Never publish production credentials to GitHub.
+
+For a public GitHub repository, it is recommended to use:
 
 ```text
 .env.example
 ```
 
-Example:
+instead of committing real credentials in:
 
-```env
-DB_ROOT_PASSWORD=change_me
-DB_NAME=wordpress_db
-DB_USER=wordpress_user
-DB_PASSWORD=change_me
-
-DB_CONTAINER_NAME=wordpress_db
-WP_CONTAINER_NAME=wordpress_site
-PMA_CONTAINER_NAME=wordpress_phpmyadmin
-
-WP_PORT=8080
-PMA_PORT=8081
-```
-
-This allows other developers to create their own `.env` file without exposing your credentials.
-
----
-
-# 🔄 Updating Docker Images
-
-To download the latest images:
-
-```bash
-docker compose pull
-```
-
-Then recreate the containers:
-
-```bash
-docker compose up -d
+```text
+.env
 ```
 
 ---
@@ -445,22 +426,51 @@ docker compose up -d
 | WordPress  | http://localhost:8080 |
 | phpMyAdmin | http://localhost:8081 |
 
-Ports can be changed through the `.env` file.
+---
+
+# 🧱 Creating Another WordPress Installation
+
+This project can be duplicated to create another independent WordPress installation.
+
+Copy the project into a new directory and change the following values in `.env`:
+
+```env
+DB_NAME=wordpress2
+DB_CONTAINER_NAME=wordpress2_db
+WP_CONTAINER_NAME=wordpress2_site
+PMA_CONTAINER_NAME=wordpress2_phpmyadmin
+
+WP_PORT=8090
+PMA_PORT=8091
+```
+
+Make sure the container names and ports are different from the existing installation.
+
+Then run:
+
+```bash
+docker compose up -d
+```
+
+The new WordPress installation will be available at:
+
+```text
+http://localhost:8090
+```
 
 ---
 
-# 🧩 Future Improvements
+# 🚀 Future Improvements
 
-This project can be extended to support:
+This project can later be extended to support:
 
-* Multiple WordPress installations
+* Multiple WordPress websites
 * Multiple databases
+* WooCommerce
 * Nginx Proxy Manager
 * Custom domains
 * HTTPS / SSL
-* WordPress Multisite
-* WooCommerce
-* Redis / Object Cache
+* Redis Object Cache
 * Automated backups
 * Development and production configurations
 
